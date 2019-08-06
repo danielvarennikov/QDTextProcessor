@@ -8,6 +8,14 @@
 
 using namespace std;
 
+    void readFile(char* path);
+    void writeToFileAppend(char* path,char* message);
+    void modifyFile(char* path,int lineToChange,string toInsert);
+    void grep(char* path,string expression);
+    void spellchecker(char* path);
+    bool foundInDictionary(string word);
+    bool isDigit(string word);
+
 //read the file as it is
 void readFile(char* path){
 
@@ -66,7 +74,6 @@ void writeToFileAppend(char* path,char* message){
   }
 
 }
-
 
 //change a line
 void modifyFile(char* path,int lineToChange,string toInsert){
@@ -217,4 +224,103 @@ void grep(char* path,string expression){
     }
 
 }
+
+void spellchecker(char* path){
+  //Check all the words in a text file and print the ones that have spelling mistakes in them
+  string line;
+  ifstream myfile;
+  ostringstream getLine;
+  string text;
+  myfile.open(path);
+  if (myfile.is_open()) {
+
+    //Transfer the file to a string so that we can work with it
+    while(getline(myfile, line)) {
+        getLine<<line;
+        string query(getLine.str());
+    }
+    myfile.close();
+  }else{
+      cout<<"Wrong path to file"<<endl;
+  }
+
+  //Our file as a string
+  text = getLine.str();
+
+  ostringstream regularExpression;
+  regularExpression<<"[a-zA-z0-9]*";
+  string query(regularExpression.str());
+  string regularExpressionFinal = regularExpression.str();
+  regex r(regularExpressionFinal);
+  auto words_begin = sregex_iterator(text.begin(), text.end(), r);
+  auto words_end = sregex_iterator();
+  int counter = 0;
+
+    //Iterate through all the found matches
+    //Each line has its indicator number
+    for (sregex_iterator i = words_begin; i != words_end; ++i) {
+        smatch match = *i;
+        string match_str = match.str();
+        transform(match_str.begin(), match_str.end(), match_str.begin(),[](unsigned char c){ return tolower(c); });
+        if(foundInDictionary(match_str) == false && isDigit(match_str) == false){
+            cout<<counter;
+            cout<<'\t'<<match_str<<endl;
+            counter = counter + 1;
+        }
+    }
+}
+
+bool foundInDictionary(string word){
+
+  //Check if your word exists in the dictionary
+  string line;
+  ifstream myfile;
+  ostringstream getLine;
+  string text;
+  myfile.open("dictionary.txt");
+  if (myfile.is_open()) {
+
+    //Transfer the file to a string so that we can work with it
+    while(getline(myfile, line)) {
+        getLine<<'$'<<line<<'\t';
+        string query(getLine.str());
+    }
+    myfile.close();
+  }else{
+      cout<<"Wrong path to file"<<endl;
+  }
+
+  text = getLine.str();
+
+  ostringstream regularExpression;
+  regularExpression<<"[$]"<<word;
+  string query(regularExpression.str());
+  string regularExpressionFinal = regularExpression.str();
+  regex r(regularExpressionFinal);
+  auto words_begin = sregex_iterator(text.begin(), text.end(), r);
+  auto words_end = sregex_iterator();
+  bool found = false;
+    //Iterate through all the found matches
+    for (sregex_iterator i = words_begin; i != words_end && found == false; ++i) {
+        smatch match = *i;
+        string match_str = match.str();
+        if(match_str.length() != 0){
+            found = true;
+        }
+    }
+
+    return found;
+
+}
+
+bool isDigit(string word){
+bool answer = true;
+for(int i = 0;i<word.length() && answer == true;i = i + 1){
+    if(isdigit(word[i]) == false){
+        answer = false;
+    }
+}
+return answer;
+}
+
 #endif // FILEPROCESSOR_H_INCLUDED
