@@ -3,4 +3,10 @@ Quick and Dirty Text processor
 
 A simple text file processor.
 
-Currently capable of reading a text file, appending to a text file and modifying a line in it.
+readFile(/path/) -> prints the lines of the file in a numbered order
+
+writeToFileAppend(/path/,/message/) -> appends a message to the end of the file
+
+modifyFile(/path/,/lineToChange/,/toInsert/) -> inserts a line instead of the chosen line
+
+grep(/path/,/expression/) -> prints all the lines with the chosen expression
