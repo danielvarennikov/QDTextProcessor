@@ -178,8 +178,9 @@ void grep(char* path,string expression){
   //Our file as a string
   text = getLine.str();
 
+  ostringstream orderedText;
   ostringstream regularExpression;
-  regularExpression<<"[^.]*"<<expression<<"[^.]*[.]{1}+";
+  regularExpression<<"[^.]*[.]{1}+";
   string query(regularExpression.str());
   string regularExpressionFinal = regularExpression.str();
   regex r(regularExpressionFinal);
@@ -188,11 +189,31 @@ void grep(char* path,string expression){
   int counter = 0;
 
     //Iterate through all the found matches
+    //Each line has its indicator number
     for (sregex_iterator i = words_begin; i != words_end; ++i) {
         smatch match = *i;
         string match_str = match.str();
-        cout <<counter<<'\t'<< match_str << endl;
+        orderedText<<counter<<'\t'<< match_str << endl;
+        string query(orderedText.str());
         counter = counter + 1;
+    }
+
+  //Our file as a string
+  text = orderedText.str();
+
+  ostringstream regularExpression2;
+  regularExpression2<<"[^.]*"<<expression<<"[^.]*[.]{1}+";
+  string query2(regularExpression2.str());
+  string regularExpressionFinal2 = regularExpression2.str();
+  regex r2(regularExpressionFinal2);
+  auto words_begin2 = sregex_iterator(text.begin(), text.end(), r2);
+  auto words_end2 = sregex_iterator();
+
+    //Iterate through all the found matches
+    for (sregex_iterator i = words_begin2; i != words_end2; ++i) {
+        smatch match2 = *i;
+        string match_str2 = match2.str();
+        cout << match_str2 << endl;
     }
 
 }
